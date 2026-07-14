@@ -17,14 +17,6 @@ class Json2Cpg extends X2CpgFrontend {
 
     new JsonCreationPass(cpg, config.inputPath).createAndApply()
 
-        new ContainsEdgePass(cpg).createAndApply()
-        TypeNodePass.withTypesFromCpg(cpg).createAndApply()
-        new RefEdgePass(cpg).createAndApply()
-        new AbapTypeInferencePass(cpg).createAndApply()
-        new TypeEvalPass(cpg).createAndApply()
-      }
     }
   }
-
-  private val logger = org.slf4j.LoggerFactory.getLogger(classOf[Abap2Cpg])
-
+}
