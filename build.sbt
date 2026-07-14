@@ -27,6 +27,14 @@ lazy val abap2cpg          = Projects.abap2cpg
 lazy val rust2cpg          = Projects.rust2cpg
 lazy val linterRules       = Projects.linterRules
 
+lazy val json2cpg = project
+  .in(file("joern-cli/frontends/json2cpg"))
+  .dependsOn(x2cpg, semanticcpg)
+  .settings(
+    name := "json2cpg",
+    Compile / mainClass := Some("io.joern.json2cpg.Main")
+  )
+
 lazy val root = project
   .in(file("."))
   .aggregate(
