@@ -1,8 +1,9 @@
 package io.joern.json2cpg
 
 import io.joern.x2cpg.{X2Cpg, X2CpgFrontend}
-import io.joern.x2cpg.passes.frontend.{MetaDataPass, TypeNodePass}
-import io.shiftleft.codepropertygraph.generated.{Cpg, Languages}
+import io.joern.x2cpg.passes.frontend.MetaDataPass
+import io.shiftleft.codepropertygraph.generated.Cpg
+import io.joern.json2cpg.passes.GraphCreationPass
 
 import scala.util.Try
 
@@ -15,8 +16,7 @@ class Json2Cpg extends X2CpgFrontend {
 
     MetaDataPass(cpg, "WASM", config.inputPath).createAndApply()
 
-    new JsonCreationPass(cpg, config.inputPath).createAndApply()
-
+new GraphCreationPass(cpg, List(config.inputPath), config).createAndApply()
     }
   }
 }
