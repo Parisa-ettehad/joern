@@ -1,12 +1,11 @@
 package io.joern.json2cpg.passes
 
+import org.slf4j.LoggerFactory
 import io.joern.json2cpg.Config
-import io.joern.json2cpg.GraphCreator
 import io.joern.json2cpg.parser.JsonParser
 import io.joern.x2cpg.ValidationMode
 import io.shiftleft.codepropertygraph.generated.Cpg
 import io.shiftleft.passes.ForkJoinParallelCpgPass
-import org.slf4j.LoggerFactory
 
 import java.nio.file.Paths
 import scala.util.{Failure, Success}
@@ -17,7 +16,7 @@ class GraphCreationPass(
   config: Config
 ) extends ForkJoinParallelCpgPass[String](cpg) {
 
-  private val logger = LoggerFactory.getLogger(classOf[GraphCreationPass])
+  private val logger = LoggerFactory.getLogger(getClass)
   private val parser = JsonParser()
 
   override def generateParts(): Array[String] =

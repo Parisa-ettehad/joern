@@ -57,7 +57,7 @@ class JsonParser {
     GraphEdge(
       source = json("source").str,
       target = json("target").str,
-      edgeType = json("type").str
+      edgeType = json("edgeType").str
     )
   }
 }

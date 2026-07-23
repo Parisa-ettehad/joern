@@ -1,12 +1,14 @@
-package io.joern.json2cpg
+package io.joern.json2cpg.passes
 
 import io.joern.json2cpg.parser.JsonIntermediateGraph.*
 import io.shiftleft.codepropertygraph.generated.nodes.*
-import overflowdb.BatchedUpdate.DiffGraphBuilder
-
+import io.shiftleft.codepropertygraph.generated.{DiffGraphBuilder, EdgeTypes}
 import scala.collection.mutable
 
-class GraphCreator(graph: GraphRoot, diffGraph: DiffGraphBuilder) {
+class GraphCreator(
+  graph: GraphRoot, 
+  diffGraph: DiffGraphBuilder
+  ) {
 
   private val nodeByJsonId =
     mutable.HashMap.empty[String, NewNode]
@@ -84,20 +86,20 @@ class GraphCreator(graph: GraphRoot, diffGraph: DiffGraphBuilder) {
       )
 
       edge.edgeType.toUpperCase match {
+        case "AST" =>
+          diffGraph.addEdge(source, target, EdgeTypes.AST)
+
         case "CFG" =>
           diffGraph.addEdge(source, target, EdgeTypes.CFG)
 
-        case "CDG" | "CONTROL_DEPENDENCE" =>
-          // نیازمند بررسی schema و edge type پشتیبانی‌شده در نسخه Joern تو
-          diffGraph.addEdge(source, target, "CDG")
+        case "CDG" =>
+          diffGraph.addEdge(source, target, EdgeTypes.CDG)
 
-        case "DDG" | "DATA_DEPENDENCE" =>
+        case "DDG" | "REACHING_DEF" =>
           diffGraph.addEdge(source, target, EdgeTypes.REACHING_DEF)
 
         case other =>
-          throw new IllegalArgumentException(
-            s"Unsupported edge type: $other"
-          )
+            println(s"Unknown edge type: $other")
       }
     }
   }

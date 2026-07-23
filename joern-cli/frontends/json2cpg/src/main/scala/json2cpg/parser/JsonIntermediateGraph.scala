@@ -13,7 +13,7 @@ object JsonIntermediateGraph {
   case class GraphEdge(
     source: String,
     target: String,
-    edgeType: String
+    edgeType: String,
   )
 
   case class GraphRoot(
