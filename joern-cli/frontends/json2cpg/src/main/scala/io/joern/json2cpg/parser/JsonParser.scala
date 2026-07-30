@@ -46,7 +46,7 @@ class JsonParser {
   private def parseNode(json: Value): GraphNode = {
     GraphNode(
       id = json("id").str,
-      nodeType = json("type").str,
+      nodeType = json("nodeType").str,
       label = json.obj.get("label").map(_.str),
       code = json.obj.get("code").map(_.str),
       line = json.obj.get("line").map(_.num.toInt)

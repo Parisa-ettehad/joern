@@ -48,6 +48,12 @@ class GraphCreator(
         NewBlock()
           .code(node.code.getOrElse(""))
           .lineNumber(node.line)
+          
+      case "CONTROL_STRUCTURE" =>
+        NewControlStructure()
+          .controlStructureType(node.label.getOrElse("UNKNOWN"))
+          .code(node.code.getOrElse(""))
+          .lineNumber(node.line)
 
       case "IDENTIFIER" =>
         NewIdentifier()
