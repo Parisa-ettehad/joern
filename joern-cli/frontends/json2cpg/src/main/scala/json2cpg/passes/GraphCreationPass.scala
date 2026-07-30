@@ -6,6 +6,7 @@ import io.joern.json2cpg.parser.JsonParser
 import io.joern.x2cpg.ValidationMode
 import io.shiftleft.codepropertygraph.generated.Cpg
 import io.shiftleft.passes.ForkJoinParallelCpgPass
+import io.shiftleft.codepropertygraph.generated.DiffGraphBuilder
 
 import java.nio.file.Paths
 import scala.util.{Failure, Success}
@@ -19,13 +20,21 @@ class GraphCreationPass(
   private val logger = LoggerFactory.getLogger(getClass)
   private val parser = JsonParser()
 
-  override def generateParts(): Array[String] =
-    jsonFiles.toArray
+  override def generateParts(): Array[String] = {
+  logger.info(s"Number of JSON files: ${jsonFiles.size}")
+  jsonFiles.foreach(file =>
+    logger.info(s"JSON input file: $file")
+  )
+
+  jsonFiles.toArray
+}
 
   override def runOnPart(
     diffGraph: DiffGraphBuilder,
     jsonFile: String
   ): Unit = {
+
+    logger.info(s"Processing JSON file: $jsonFile")
 
     implicit val schemaValidation: ValidationMode =
       ValidationMode.Enabled
@@ -33,16 +42,19 @@ class GraphCreationPass(
     parser.parseFile(Paths.get(jsonFile)) match {
 
       case Success(graph) =>
-        logger.debug(s"Generating CPG for: ${graph.fileName}")
+        logger.info(
+          s"Successfully parsed: ${graph.fileName}"
+        )
 
-      val graphCreator =
-        new GraphCreator(graph, diffGraph)
+        val graphCreator =
+          new GraphCreator(graph, diffGraph)
 
-      graphCreator.create()
+        graphCreator.create()
 
       case Failure(exception) =>
         logger.warn(
-          s"Failed to parse '$jsonFile': ${exception.getMessage}"
+          s"Failed to parse '$jsonFile': ${exception.getMessage}",
+          exception
         )
     }
   }
