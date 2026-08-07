@@ -24,6 +24,21 @@ class GraphCreator(
 
       nodeByJsonId.put(jsonNode.id, cpgNode)
       diffGraph.addNode(cpgNode)
+
+      cpgNode match {
+        case method: NewMethod =>
+          val methodReturn =
+            NewMethodReturn()
+              .code("RET")
+              .typeFullName("ANY")
+              .order(2)
+              .lineNumber(jsonNode.line)
+
+          diffGraph.addNode(methodReturn)
+          diffGraph.addEdge(method, methodReturn, EdgeTypes.AST)
+
+        case _ =>
+      }
     }
   }
 
@@ -48,7 +63,7 @@ class GraphCreator(
         NewBlock()
           .code(node.code.getOrElse(""))
           .lineNumber(node.line)
-          
+
       case "CONTROL_STRUCTURE" =>
         NewControlStructure()
           .controlStructureType(node.label.getOrElse("UNKNOWN"))
