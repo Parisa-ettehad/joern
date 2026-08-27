@@ -17,6 +17,14 @@ class JsonParser {
       parseGraph(json)
     }
 
+  private def parseId(value: Value): String = {
+    value match {
+      case Str(s) => s
+      case Num(n) => n.toLong.toString
+      case other  => other.toString
+    }
+ }
+
   private def parseGraph(json: Value): GraphRoot = {
     val fileName =
       json.obj
@@ -45,7 +53,7 @@ class JsonParser {
 
   private def parseNode(json: Value): GraphNode = {
     GraphNode(
-      id = json("id").str,
+      id = parseId(json("id")),
       nodeType = json("nodeType").str,
       label =
         json.obj.get("name")
@@ -58,8 +66,8 @@ class JsonParser {
 
   private def parseEdge(json: Value): GraphEdge = {
     GraphEdge(
-      source = json("source").str,
-      target = json("target").str,
+      source = parseId(json("source")),
+      target = parseId(json("target")),
       edgeType = json("edgeType").str
     )
   }
