@@ -60,7 +60,10 @@ class JsonParser {
           .orElse(json.obj.get("label"))
           .map(_.str),
       code = json.obj.get("code").map(_.str),
-      line = json.obj.get("line").map(_.num.toInt)
+      line = json.obj.get("line").map(_.num.toInt),
+      order = json.obj.get("order").map(_.num.toInt),
+      typeFullName = json.obj.get("typeFullName").map(_.str),
+      index = json.obj.get("index").map(_.num.toInt)
     )
   }
 

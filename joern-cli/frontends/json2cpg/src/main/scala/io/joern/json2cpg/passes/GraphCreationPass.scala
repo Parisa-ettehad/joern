@@ -4,11 +4,13 @@ import org.slf4j.LoggerFactory
 import io.joern.json2cpg.Config
 import io.joern.json2cpg.parser.JsonParser
 import io.joern.x2cpg.ValidationMode
+import io.joern.json2cpg.parser.JsonIntermediateGraph
 import io.shiftleft.codepropertygraph.generated.Cpg
 import io.shiftleft.passes.ForkJoinParallelCpgPass
 import io.shiftleft.codepropertygraph.generated.DiffGraphBuilder
 
-import java.nio.file.Paths
+
+import java.nio.file.{Files, Paths}
 import scala.util.{Failure, Success}
 
 class GraphCreationPass(

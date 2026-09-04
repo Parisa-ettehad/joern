@@ -7,7 +7,10 @@ object JsonIntermediateGraph {
     nodeType: String,
     label: Option[String],
     code: Option[String],
-    line: Option[Int]
+    line: Option[Int],
+    order: Option[Int] = None,
+    typeFullName: Option[String] = None,
+    index: Option[Int] = None,
   )
 
   case class GraphEdge(

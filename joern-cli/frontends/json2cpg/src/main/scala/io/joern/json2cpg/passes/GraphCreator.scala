@@ -19,27 +19,42 @@ class GraphCreator(
   }
 
   private def createNodes(): Unit = {
-    graph.nodes.foreach { jsonNode =>
-      val cpgNode = createNode(jsonNode)
+    graph.nodes
+      .filterNot(n =>
+        n.nodeType.equalsIgnoreCase("META_DATA") ||
+        n.nodeType.equalsIgnoreCase("FILE")
+      )
+      .foreach { jsonNode =>
+        val cpgNode = createNode(jsonNode)
 
-      nodeByJsonId.put(jsonNode.id, cpgNode)
-      diffGraph.addNode(cpgNode)
+        nodeByJsonId.put(jsonNode.id, cpgNode)
+        diffGraph.addNode(cpgNode)
+        cpgNode match {
+          case method: NewMethod =>
+            val hasMethodReturn = graph.edges.exists { edge =>
+              edge.edgeType.equalsIgnoreCase("AST") &&
+              edge.source == jsonNode.id &&
+              graph.nodes
+                .find(_.id == edge.target)
+                .exists(_.nodeType.equalsIgnoreCase("METHOD_RETURN"))
+            }
 
-      cpgNode match {
-        case method: NewMethod =>
-          val methodReturn =
-            NewMethodReturn()
-              .code("RET")
-              .typeFullName("ANY")
-              .order(2)
-              .lineNumber(jsonNode.line)
+            if (!hasMethodReturn) {
+              val methodReturn =
+                NewMethodReturn()
+                  .code("RET")
+                  .typeFullName("ANY")
+                  .order(1)
+                  .lineNumber(jsonNode.line)
 
-          diffGraph.addNode(methodReturn)
-          diffGraph.addEdge(method, methodReturn, EdgeTypes.AST)
+              diffGraph.addNode(methodReturn)
+              diffGraph.addEdge(method, methodReturn, EdgeTypes.AST)
+            }
 
-        case _ =>
+          case _ =>
+        }
+
       }
-    }
   }
 
   private def createNode(node: GraphNode): NewNode = {
@@ -81,6 +96,22 @@ class GraphCreator(
         NewLiteral()
           .code(node.code.getOrElse(""))
           .typeFullName("ANY")
+          .lineNumber(node.line)
+
+      case "METHOD_PARAMETER_IN" =>
+        NewMethodParameterIn()
+          .name(node.label.getOrElse("unknown"))
+          .code(node.code.getOrElse(""))
+          .typeFullName(node.typeFullName.getOrElse("ANY"))
+          .index(node.index.getOrElse(0))
+          .order(node.order.getOrElse(0))
+          .lineNumber(node.line)
+
+      case "METHOD_RETURN" =>
+        NewMethodReturn()
+          .code(node.code.getOrElse("RET"))
+          .typeFullName(node.typeFullName.getOrElse("ANY"))
+          .order(node.order.getOrElse(0))
           .lineNumber(node.line)
 
       case other =>
